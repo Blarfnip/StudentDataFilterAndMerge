@@ -1,0 +1,30 @@
+body {
+    background-color: white;
+    color: black;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    align-self: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    font-family: 'Lato';
+}
+
+div {
+    padding: 5px;
+}
+
+h3 {
+    margin: 2px;
+}
+
+button {
+    margin: 4px;
+}
+
+.log {
+    font-size: small;
+    opacity: 0.8;
+    font-style: italic;
+}

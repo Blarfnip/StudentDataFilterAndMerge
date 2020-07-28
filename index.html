@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <script src="./jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Student Data Merge Tool</title>
+  </head>
+  <body>
+    <div>
+      <h1>Student Data Merge Tool</h1>
+      <i>Developed for Concord Consortium by Saul Amster</i>
+    </div>
+    <hr>
+    <div id="Step1Container">
+      <h3>Step 1:</h3><br>
+      Click the button and select a folder that contains only .xlsx files in it. These files 
+      should have a column labeled "Teachers". Also, the first column should be the Student
+       ID column.<br>
+      <button id="Step1">Select Data Folder</button>
+      <div id="Step1Log" class="log"></div>
+      <hr>
+    </div>
+    <div id="Step2Container">
+      <h3>Step 2: </h3><br>
+      Click the button to read the files into the program. This could take several minutes.<br>
+      <button id="Step2">Read Data Files</button>
+      <div id="Step2Log" class="log"></div>
+      <hr>
+    </div>
+    <div id="Step3Container">
+      <h3>Step 3:</h3><br>
+      Enter the names of the teachers whose student data you wish to extract separated by commas in
+       the text area below. These names must match the names found in the data imported during Step 2.
+      Click the button to enter the teacher names and verify that they exist in the data.<br>
+      <textarea id="TeacherList"></textarea><br>
+      <button id="Step3">Enter Teacher Names</button>
+      <div id="Step3Log" class="log"></div>
+      <hr>
+    </div>
+    <div id="Step4Container">
+      <h3>Step 4: </h3><br>
+      Click the button to let the program filter all the data and extract the desired student data.<br>
+      <button id="Step4">Filter Data Files</button>
+      <div id="Step4Log" class="log"></div>
+      <hr>
+    </div>
+    <div id="Step5Container">
+      <h3>Step 5: </h3><br>
+      Click the button to select the directory to export the filtered data to as a new .xlsx file.<br>
+      <button id="Step5">Export Filtered Data</button>      
+      <div id="Step5Log" class="log"></div>
+      <hr>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>

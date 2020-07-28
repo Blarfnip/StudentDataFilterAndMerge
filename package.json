@@ -1,0 +1,28 @@
+{
+  "name": "studentdatafilterandmerge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^9.1.0",
+    "linq": "^3.2.2",
+    "node-xlsx": "^0.15.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.electron.studendatafilter",
+    "productName": "Student Data Merge Tool",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "portable"
+    }
+  }
+}
