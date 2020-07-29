@@ -4,11 +4,13 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "electron": "^9.1.0",
     "linq": "^3.2.2",
     "node-xlsx": "^0.15.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "electron-builder": "^22.8.0",
+    "electron": "^9.1.0"
+  },
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder"
