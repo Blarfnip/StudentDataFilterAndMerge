@@ -16,6 +16,7 @@ function createWindow () {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
+  // Uncommment this to have access to Chrome debugger
   // mainWindow.webContents.openDevTools()
 }
 

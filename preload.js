@@ -1,9 +1,15 @@
-const { readFileSync, readdirSync, writeFileSync } = require('fs');
+// This file is responsible for all of the heavy lifting of the application.
+// It's functions are called from renderer.js
+// This file has access to node packages
+
+const { readdirSync, writeFileSync } = require('fs');
 const { dialog } = require('electron').remote;
 const xlsx = require('node-xlsx');
 const Enumerable = require('linq');
 const { shell } = require('electron');
 
+// Opens OS specific "Open" dialogue which accepts folders as inputs and
+// returns the selected directory path
 window.selectDataDirectory = function() {
     return dialog.showOpenDialogSync(options = {
         properties: [
@@ -12,32 +18,36 @@ window.selectDataDirectory = function() {
     })[0];
 }
 
+// Returns array of paths for all files within given directory
 window.getFiles = function (path) {
     const files = readdirSync(path);
     return files;
 }
 
+// Reads Excel file into arrays using node-xlsx package
 window.readFile = function (filePath) {
     console.log("Reading file: " + filePath);
     return (xlsx.parse(filePath));
 }
 
+// Merges all data and filters based on given teacher list
 window.filterData = function (data, teacherList) {
     const filteredData = [];
+    // Assume Student ID numbers are always the first column
+    const studentIDColumn = 0;
 
     data.forEach(file => {
         const fileData = [];
         file.forEach(sheet => {
             if(sheet.data.length >= 1) {
-                //Determine the column that the teacher's name is kept in because for some reason this data
-                //doesn't contain a unique teacher id or have any consistency between spreadsheets which column
-                // the teacher's name ends up in
+                // Determine the column that the teacher's name is kept in because this data doesn't contain a unique teacher id
                 const teacherColumnIndex = sheet.data[1].indexOf("Teachers"); // I don't like that I have to do this
-                const labels = []; //sheet.data[0].concat(sheet.data[1].concat(sheet.data[2]));
+                const labels = [];
                 //Assume the first three rows are labels
                 labels.push(sheet.data[0]);
                 labels.push(sheet.data[1]);
                 labels.push(sheet.data[2]);
+                // Add label rows and all rows that match a name in the teacher list
                 fileData.push(labels.concat(Enumerable.from(sheet.data).where(e => teacherList.has(e[teacherColumnIndex]?.toLowerCase())).toArray()));    
             }
         });
@@ -55,42 +65,40 @@ window.filterData = function (data, teacherList) {
             mergedData.set("label3", mergedData.has("label3") ? mergedData.get("label3").concat(sheet[2]) : sheet[2]);
             sheet.forEach(student => {
                 // Ignore rows without Student ID numbers
-                // Assume Student ID numbers are always the first column
-                if(isNaN(student[0]) || student[0] === "")
+                if(isNaN(student[studentIDColumn]) || student[studentIDColumn] === "")
                     return;
                 
-                if(mergedData.has(student[0])) { // Student ID has already been found in previous file
-                    if(mergedData.get(student[0]).length > maxIndex) { // If duplicate Student ID in the same file found
+                if(mergedData.has(student[studentIDColumn])) { // Student ID has already been found in previous file
+                    if(mergedData.get(student[studentIDColumn]).length > maxIndex) { // If duplicate Student ID in the same file found
                         //Duplicate set of data
-                        if(mergedData.has(student[0] + "-DUPLICATE")) {
-                            mergedData.set(student[0] + "-DUPLICATE", mergedData.get(student[0] + "-DUPLICATE").concat(student));
-
-                        } else {
-                            student[0] += "-DUPLICATE";
+                        if(mergedData.has(student[studentIDColumn] + "-DUPLICATE")) { // If duplicate already exists, add additional data to that row
+                            mergedData.set(student[studentIDColumn] + "-DUPLICATE", mergedData.get(student[studentIDColumn] + "-DUPLICATE").concat(student));
+                        } else { // Else create new row
+                            student[studentIDColumn] += "-DUPLICATE";
+                            
+                            // If not first data sheet, pad data with empty values
                             if(maxIndex > 0) {
                                 const rowData = [];
                                 for(let i = 0; i < maxIndex; i++) {
                                     rowData.push("");
                                 }
-                                mergedData.set(student[0] + "-DUPLICATE", rowData.concat(student));
+                                mergedData.set(student[studentIDColumn] + "-DUPLICATE", rowData.concat(student));
                             } else {
-                                mergedData.set(student[0] + "-DUPLICATE", student);
+                                mergedData.set(student[studentIDColumn] + "-DUPLICATE", student);
                             }
                         }
-                        
-
                     } else { // Concat new student data to existing data
-                        mergedData.set(student[0], mergedData.get(student[0]).concat(student));
+                        mergedData.set(student[studentIDColumn], mergedData.get(student[studentIDColumn]).concat(student));
                     }
                 } else { // First time finding Student ID
-                    if(maxIndex > 0) { // If not first file, pad row with empty data
+                    if(maxIndex > 0) { // If not first sheet, pad row with empty data
                         const rowData = [];
                         for(let i = 0; i < maxIndex; i++) {
                             rowData.push("");
                         }
-                        mergedData.set(student[0], rowData);
+                        mergedData.set(student[studentIDColumn], rowData);
                     } else {
-                        mergedData.set(student[0], student);
+                        mergedData.set(student[studentIDColumn], student);
                     }
                     
                 }
@@ -107,12 +115,12 @@ window.filterData = function (data, teacherList) {
         });
     });
 
-
-
     console.log(mergedData);
     return Array.from(mergedData.values());
 }
 
+// Opens OS specific "Save" dialogue which accepts a name as input and
+// returns the selected file path
 window.selectSavePath = function() {
     // Use Electron to get save path
     const path = dialog.showSaveDialogSync(options= {
@@ -126,6 +134,7 @@ window.selectSavePath = function() {
     return path;
 }
 
+// Converts data to .xlsx file and saves it to a file at the given path
 window.saveData = function(mergedData, path) {
     console.log(mergedData);
     
