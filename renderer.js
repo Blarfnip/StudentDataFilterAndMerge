@@ -5,6 +5,7 @@ let teacherList; // List of teachers to filter
 let data = []; // Raw input data from .xlsx files
 let dataPath = ""; // Path of data folder
 let mergedData; // Output filtered and merged data
+let mergeAllData = false; // Filter based on teacher names or not
 
 // Hide later steps by default
 $("#Step2Container").hide();
@@ -77,6 +78,19 @@ $("#Step3").on("click", () => {
         }
     });
 
+    mergeAllData = false;
+    console.log(teacherList.size);
+    if(teacherList.size <= 1) {
+        teacherList.forEach(value => {
+            console.log(value.size);
+            if(value.length <= 0) {
+                $("#Step3Log").append("No teachers found. Defualting to merge all data.<br>");
+                mergeAllData = true;
+            }
+        });
+    }
+    console.log(mergeAllData);
+
     $("#Step3Log").append("Done!<br>");
     $("#Step4Container").show(500, () => {
         $("html, body").animate({ scrollTop: $(document).height() }, 250);
@@ -85,7 +99,7 @@ $("#Step3").on("click", () => {
 
 // Step 4 filters and merges all of the data
 $("#Step4").on("click", () => {
-    mergedData = filterData(data, teacherList);
+    mergedData = filterData(data, teacherList, mergeAllData);
     $("#Step4Log").html("Done!<br>");
     $("#Step5Container").show(500, () => {
         $("html, body").animate({ scrollTop: $(document).height() }, 250);

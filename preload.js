@@ -31,7 +31,7 @@ window.readFile = function (filePath) {
 }
 
 // Merges all data and filters based on given teacher list
-window.filterData = function (data, teacherList) {
+window.filterData = function (data, teacherList, mergeAllData) {
     const filteredData = [];
     // Assume Student ID numbers are always the first column
     const studentIDColumn = 0;
@@ -48,7 +48,7 @@ window.filterData = function (data, teacherList) {
                 labels.push(sheet.data[1]);
                 labels.push(sheet.data[2]);
                 // Add label rows and all rows that match a name in the teacher list
-                fileData.push(labels.concat(Enumerable.from(sheet.data).where(e => teacherList.has(e[teacherColumnIndex]?.toLowerCase())).toArray()));    
+                fileData.push(labels.concat(Enumerable.from(sheet.data).where(e => mergeAllData || teacherList.has(e[teacherColumnIndex]?.toLowerCase())).toArray()));    
             }
         });
         filteredData.push(fileData);
