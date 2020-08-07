@@ -17,7 +17,7 @@ function createWindow () {
 
   // Open the DevTools.
   // Uncommment this to have access to Chrome debugger
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

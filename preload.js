@@ -35,6 +35,7 @@ window.filterData = function (data, teacherList, mergeAllData) {
     const filteredData = [];
     // Assume Student ID numbers are always the first column
     const studentIDColumn = 0;
+    const teacherIndecies = [];
 
     data.forEach(file => {
         const fileData = [];
@@ -42,6 +43,7 @@ window.filterData = function (data, teacherList, mergeAllData) {
             if(sheet.data.length >= 1) {
                 // Determine the column that the teacher's name is kept in because this data doesn't contain a unique teacher id
                 const teacherColumnIndex = sheet.data[1].indexOf("Teachers"); // I don't like that I have to do this
+                teacherIndecies.push(teacherColumnIndex);
                 const labels = [];
                 //Assume the first three rows are labels
                 labels.push(sheet.data[0]);
@@ -116,7 +118,28 @@ window.filterData = function (data, teacherList, mergeAllData) {
     });
 
     console.log(mergedData);
-    return Array.from(mergedData.values());
+    var outputData = Array.from(mergedData.values());
+    outputData = outputData.slice(3, outputData.length);
+    var top = Array.from(mergedData.values()).slice(0, 3);
+    
+    
+    outputData = top.concat(outputData.sort((a, b) => {
+        const teacherNamesA = teacherIndecies.map(i => {return a[i]});
+        const teacherNamesB = teacherIndecies.map(i => {return b[i]});
+
+        for(var i = 0; i < teacherNamesA.length; i++) {
+            if(teacherNamesA[i] !== "" && teacherNamesA[i] != undefined) {
+                for(var k = 0; k < teacherNamesB.length; k++) {
+                    if(teacherNamesB[k] !== "" && teacherNamesB[i] != undefined) {
+                        return teacherNamesA[i].localeCompare(teacherNamesB[k]);
+                    }
+                }
+            }
+        }
+        return 0;
+    }));
+
+    return outputData;
 }
 
 // Opens OS specific "Save" dialogue which accepts a name as input and
