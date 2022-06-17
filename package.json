@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "electron-builder": "^22.8.0",
-    "electron": "^9.1.0"
+    "electron": "^15.5.5"
   },
   "scripts": {
     "start": "electron .",
